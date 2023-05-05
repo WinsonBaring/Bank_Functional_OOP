@@ -4,6 +4,8 @@
  */
 package Bank_Functional_System;
 
+import java.util.ArrayList;
+import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 
 /**
@@ -19,6 +21,16 @@ public class Verification extends javax.swing.JFrame {
     Connect conn;
     public Verification() {
         initComponents();
+        tbl = (DefaultTableModel)tblverification.getModel();
+        conn = new Connect();
+        displayTable();
+    }
+    public void displayTable(){
+        ArrayList<Verifications> verify = conn.displayverify();
+        for(Verifications v : verify){
+            String data[] = {v.getCustomerusername(),v.getAccountnumber(),Double.toString(v.getAmount()),v.getTypeoftransaction(),Integer.toString(v.getStatus())};
+            tbl.addRow(data);
+        }
     }
 
     /**
@@ -32,14 +44,14 @@ public class Verification extends javax.swing.JFrame {
 
         jLabel1 = new javax.swing.JLabel();
         jScrollPane1 = new javax.swing.JScrollPane();
-        verification = new javax.swing.JTable();
+        tblverification = new javax.swing.JTable();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
         jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
         jLabel1.setText("Verification");
 
-        verification.setModel(new javax.swing.table.DefaultTableModel(
+        tblverification.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
 
             },
@@ -47,12 +59,12 @@ public class Verification extends javax.swing.JFrame {
                 "Customer Name", "Account Number", "Amount ", "Type of Transaction"
             }
         ));
-        verification.addMouseListener(new java.awt.event.MouseAdapter() {
+        tblverification.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
-                verificationMouseClicked(evt);
+                tblverificationMouseClicked(evt);
             }
         });
-        jScrollPane1.setViewportView(verification);
+        jScrollPane1.setViewportView(tblverification);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -81,10 +93,29 @@ public class Verification extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void verificationMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_verificationMouseClicked
+    
+    private void tblverificationMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblverificationMouseClicked
         // TODO add your handling code here:
+        int result = JOptionPane.showConfirmDialog(rootPane, "Are you sure you wanted to update?");
         
-    }//GEN-LAST:event_verificationMouseClicked
+        int index=tblverification.getSelectedRow();
+        String customerusername = (String) tblverification.getValueAt(index,0);
+        String accountnumber = (String) tblverification.getValueAt(index, 1);
+        String amount = (String) tblverification.getValueAt(index, 2) ;
+        String transactiontype = (String) tblverification.getValueAt(index, 3);
+        if(result == JOptionPane.NO_OPTION){
+            return;
+        }else if(result == JOptionPane.YES_OPTION){
+            Account account = new Account(accountnumber,customerusername, Double.parseDouble(amount));
+            boolean verify = conn.verify(account);
+            if(verify){
+                tbl.removeRow(index);
+            }
+        }else{
+            return;
+        }
+        
+    }//GEN-LAST:event_tblverificationMouseClicked
 
     /**
      * @param args the command line arguments
@@ -112,6 +143,9 @@ public class Verification extends javax.swing.JFrame {
             java.util.logging.Logger.getLogger(Verification.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
         //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
 
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
@@ -124,6 +158,6 @@ public class Verification extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel jLabel1;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JTable verification;
+    private javax.swing.JTable tblverification;
     // End of variables declaration//GEN-END:variables
 }

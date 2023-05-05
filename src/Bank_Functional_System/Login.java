@@ -4,6 +4,7 @@
  */
 package Bank_Functional_System;
 
+import java.awt.event.KeyEvent;
 import javax.swing.JOptionPane;
 
 /**
@@ -46,6 +47,11 @@ public class Login extends javax.swing.JFrame {
         btnLogin.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnLoginActionPerformed(evt);
+            }
+        });
+        btnLogin.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                btnLoginKeyPressed(evt);
             }
         });
 
@@ -169,6 +175,23 @@ public class Login extends javax.swing.JFrame {
            JOptionPane.showMessageDialog(this, "Incorrect username/password.");
         
     }//GEN-LAST:event_btnLoginActionPerformed
+
+    private void btnLoginKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_btnLoginKeyPressed
+        // TODO add your handling code here:public void keyPressed(KeyEvent e) {
+        if (evt.getKeyCode() == KeyEvent.VK_ENTER) {
+            int result=conn.login(txtUsername.getText(), txtPassword.getText());
+       if (result== 1){
+           mainGui = new JMain(txtUsername.getText());
+            mainGui.show();
+       }if (result== 2){
+           Verification v = new Verification();
+            v.show();
+       }
+       else if(result ==0)
+           JOptionPane.showMessageDialog(this, "Incorrect username/password.");
+        }
+    
+    }//GEN-LAST:event_btnLoginKeyPressed
 
     /**
      * @param args the command line arguments
