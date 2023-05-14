@@ -96,7 +96,7 @@ public class Verification extends javax.swing.JFrame {
     
     private void tblverificationMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblverificationMouseClicked
         // TODO add your handling code here:
-        int result = JOptionPane.showConfirmDialog(rootPane, "Are you sure you wanted to update?");
+        int result = JOptionPane.showConfirmDialog(rootPane, "Are you sure you wanted to proceed transaction?");
         
         int index=tblverification.getSelectedRow();
         String customerusername = (String) tblverification.getValueAt(index,0);
@@ -106,10 +106,18 @@ public class Verification extends javax.swing.JFrame {
         if(result == JOptionPane.NO_OPTION){
             return;
         }else if(result == JOptionPane.YES_OPTION){
-            Account account = new Account(accountnumber,customerusername, Double.parseDouble(amount));
-            boolean verify = conn.verify(account);
-            if(verify){
+            if(transactiontype.equals("UPDATE")){
+                Account account = new Account(accountnumber,customerusername, Double.parseDouble(amount));
+                boolean verify = conn.verify(account);
+                if(verify){
                 tbl.removeRow(index);
+                }
+            }else if(transactiontype.equals("DELETE")){
+                 Account deleteaccount = new Account(accountnumber,customerusername, Double.parseDouble(amount));
+                boolean delete = conn.delete(deleteaccount);
+                    if(delete){
+                        tbl.removeRow(index);
+                    }
             }
         }else{
             return;

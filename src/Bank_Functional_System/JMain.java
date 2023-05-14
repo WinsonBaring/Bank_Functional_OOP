@@ -214,7 +214,12 @@ public class JMain extends javax.swing.JFrame {
 
     private void jButtonDeleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonDeleteActionPerformed
         // TODO add your handling code here:
-        
+        if(!check()){
+            JOptionPane.showMessageDialog(rootPane, "The fields are empty");
+            return;
+        }
+        Account account = new Account(inpAccNum.getText(), Double.parseDouble(inpBalance.getText()));
+        boolean result = conn.deleteAccount(account, this.username);
               
     }//GEN-LAST:event_jButtonDeleteActionPerformed
 

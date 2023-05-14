@@ -77,7 +77,7 @@ public class Connect {
         String sql = null;
         ArrayList<Verifications> verify = new ArrayList<Verifications>();
         try{
-            sql = "SELECT * from verification";
+            sql = "SELECT * from verification where status = 0";
             stmt = conn.createStatement();
             rs = stmt.executeQuery(sql);
             while(rs.next()){
@@ -121,10 +121,33 @@ public class Connect {
             int accountupdate = stmt.executeUpdate(sql);
             if( accountupdate == 1){
             }
-            sql = "delete from verification where customerusername = '"+account.getUsername()+"' && accountnumber = '"+account.getAccountNumber()+"'  ";
+            sql = "update verification set status = 1 where customerusername = '"+account.getUsername()+"' && accountnumber = '"+account.getAccountNumber()+"' && status =0 ";
             stmt = conn.createStatement();
             int verifyupdate = stmt.executeUpdate(sql);
             if(accountupdate == 1 && verifyupdate == 1){
+                JOptionPane.showMessageDialog(null, "Succesfully Processed" );
+                return true;
+            }
+            JOptionPane.showMessageDialog(null, "Fail to process" );
+            return false;
+        }catch(SQLException ex){
+            Logger.getLogger(Connect.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return false;
+    }
+    public boolean delete(Account account){
+        Statement stmt;
+        ResultSet rs;
+        String sql;
+        try{
+            sql = "delete from account WHERE accountNumber = '"+account.getAccountNumber()+"' && username = '"+account.getUsername()+"'&& balance = "+account.getBalance()+" ";
+            stmt = conn.createStatement();
+            int accountupdate = stmt.executeUpdate(sql);
+            
+            sql = "update verification set status = 1 where customerusername = '"+account.getUsername()+"' && accountnumber = '"+account.getAccountNumber()+"' && status = 0 ";
+            stmt = conn.createStatement();
+            int verifydelete = stmt.executeUpdate(sql);
+            if(accountupdate == 1 && verifydelete == 1){
                 JOptionPane.showMessageDialog(null, "Succesfully Processed" );
                 return true;
             }
@@ -141,7 +164,14 @@ public class Connect {
         ResultSet rs;
         String sql ;
         try{
-            sql = "select * from verification where accountnumber = '"+account.getAccountNumber()+"' && customerusername = '"+username+"' ";
+            sql = "select * from account where accountNumber = '"+account.getAccountNumber()+"' && username = '"+username+"' ";
+            stmt = conn.createStatement();
+            rs = stmt.executeQuery(sql);
+            if(!rs.next()) {
+                JOptionPane.showMessageDialog(null, "Account does not exist");
+                return false;
+            }
+            sql = "select * from verification where accountnumber = '"+account.getAccountNumber()+"' && customerusername = '"+username+"' && status = 0";
             stmt = conn.createStatement();
             rs = stmt.executeQuery(sql);
             if(rs.next()) {
@@ -168,14 +198,21 @@ public class Connect {
         ResultSet rs;
         String sql ;
         try{
-            sql = "select * from verification where accountnumber = '"+account.getAccountNumber()+"' or customerusername = '"+username+"' ";
+            sql = "select * from account where accountNumber = '"+account.getAccountNumber()+"' && username = '"+username+"' ";
+            stmt = conn.createStatement();
+            rs = stmt.executeQuery(sql);
+            if(!rs.next()) {
+                JOptionPane.showMessageDialog(null, "Account does not exist");
+                return false;
+            }
+            sql = "select * from verification where accountnumber = '"+account.getAccountNumber()+"' and customerusername = '"+username+"' and amount = "+account.getBalance()+" and status = 0 ";
             stmt = conn.createStatement();
             rs = stmt.executeQuery(sql);
             if(rs.next()) {
                 JOptionPane.showMessageDialog(null, "Pending " +rs.getString("transactiontype") + " transaction is being process.");
                 return false;
             }
-            sql = "insert into verification (`customerusername`, `accountnumber`, `amount`, `transactiontype`, `status`) VALUES ('"+username+"','"+account.getAccountNumber()+"',"+account.getBalance()+",' DELETE ',0)";
+            sql = "insert into verification (`customerusername`, `accountnumber`, `amount`, `transactiontype`, `status`) VALUES ('"+username+"','"+account.getAccountNumber()+"',"+account.getBalance()+",'DELETE',0)";
             stmt = conn.createStatement();
             int up = stmt.executeUpdate(sql);
             System.out.println(up);
